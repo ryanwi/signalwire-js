@@ -582,6 +582,13 @@ class RoomSessionConsumer extends BaseConsumer<RealTimeRoomApiEvents> {
   }
 
   /** @internal */
+  protected override getCompoundEvents() {
+    return new Map<any, any>([
+      ['video.member.updated', ['video.layout.changed']],
+    ])
+  }
+
+  /** @internal */
   protected getEmitterTransforms() {
     return new Map<
       EmitterTransformsEvents | EmitterTransformsEvents[],
