@@ -517,6 +517,8 @@ const layoutWorker: any = function* layoutWorker({ instance }: any) {
   // instance.addEventListener('layout.changed', (params: any) => {
   //   console.log('layout.changed > no auto subscribe', params)
   // })
+
+  console.log('>>>> DONE WITH layoutWorker')
 }
 
 class RoomSessionConsumer extends BaseConsumer<RealTimeRoomApiEvents> {
@@ -534,11 +536,12 @@ class RoomSessionConsumer extends BaseConsumer<RealTimeRoomApiEvents> {
     super(options)
 
     this.debouncedSubscribe = debounce(this.subscribe, 100)
-    this.attachWorkers()
-  }
 
-  protected getWorkers() {
-    return new Map([['chat', { worker: layoutWorker }]])
+    this.setWorker('layoutChanged', {
+      worker: layoutWorker,
+    })
+
+    this.attachWorkers()
   }
 
   /** @internal */
