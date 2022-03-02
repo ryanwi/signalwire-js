@@ -313,30 +313,20 @@ interface RoomSessionDocs extends RoomSessionMain {
     name: string
     positions?: Record<
       string,
-      | 'self'
-      | 'standard'
-      | `standard-${number}`
-      | 'off-canvas'
+      'self' | 'standard' | `standard-${number}` | 'off-canvas'
     >
   }): Promise<void>
 
   setPositions(params: {
     positions: Record<
       string,
-      | 'self'
-      | 'standard'
-      | `standard-${number}`
-      | 'off-canvas'
+      'self' | 'standard' | `standard-${number}` | 'off-canvas'
     >
   }): Promise<void>
 
   setMemberPosition(params: {
     memberId?: string
-    position:
-      | 'self'
-      | 'standard'
-      | `standard-${number}`
-      | 'off-canvas'
+    position: 'self' | 'standard' | `standard-${number}` | 'off-canvas'
   }): Promise<void>
 
   /**
@@ -389,10 +379,7 @@ interface RoomSessionDocs extends RoomSessionMain {
     volume?: number
     positions?: Record<
       string,
-      | 'self'
-      | 'standard'
-      | `standard-${number}`
-      | 'off-canvas'
+      'self' | 'standard' | `standard-${number}` | 'off-canvas'
     >
   }): Promise<Rooms.RoomSessionPlayback>
 
@@ -518,6 +505,20 @@ export interface RoomSessionFullState extends RoomSession {
   members: RoomSessionMember[]
 }
 
+const layoutWorker: any = function* layoutWorker({ instance }: any) {
+  console.log('>>>> ENTER layoutWorker')
+
+  // This breaks
+  instance.on('layout.changed', () => {
+    console.log('automatic subscribe')
+  })
+
+  // Works -> no auto subscribe
+  // instance.addEventListener('layout.changed', (params: any) => {
+  //   console.log('layout.changed > no auto subscribe', params)
+  // })
+}
+
 class RoomSessionConsumer extends BaseConsumer<RealTimeRoomApiEvents> {
   protected _eventsPrefix = 'video' as const
 
@@ -533,6 +534,19 @@ class RoomSessionConsumer extends BaseConsumer<RealTimeRoomApiEvents> {
     super(options)
 
     this.debouncedSubscribe = debounce(this.subscribe, 100)
+    this.attachWorkers()
+  }
+
+  protected getWorkers() {
+    return new Map([['chat', { worker: layoutWorker }]])
+  }
+
+  /** @internal */
+  addEventListener(
+    event: keyof RealTimeRoomApiEvents,
+    fn: EventEmitter.EventListener<RealTimeRoomApiEvents, any>
+  ) {
+    return super.on(event, fn)
   }
 
   on(
