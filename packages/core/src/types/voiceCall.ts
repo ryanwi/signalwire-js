@@ -125,7 +125,14 @@ export type VoiceCallEventNames =
 // export type InternalVoiceCallEventNames =
 //   ToInternalVoiceEvent<VoiceCallEventNames>
 
-export type SipCodec = 'PCMU' | 'PCMA' | 'OPUS' | 'G729' | 'G722' | 'VP8' | 'H264'
+export type SipCodec =
+  | 'PCMU'
+  | 'PCMA'
+  | 'OPUS'
+  | 'G729'
+  | 'G722'
+  | 'VP8'
+  | 'H264'
 
 export interface SipHeader {
   name: string
@@ -623,6 +630,10 @@ export interface VoiceCallContract<T = any> {
   disconnect(): Promise<void>
   detect(params: VoiceCallDetectMethodParams): Promise<VoiceCallDetectContract>
   amd(
+    params?: Omit<VoiceCallDetectMachineParams, 'type'>
+  ): Promise<VoiceCallDetectContract>
+  // amd alias
+  detectAnsweringMachine(
     params?: Omit<VoiceCallDetectMachineParams, 'type'>
   ): Promise<VoiceCallDetectContract>
   detectFax(

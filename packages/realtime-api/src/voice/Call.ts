@@ -983,6 +983,9 @@ export class CallConsumer extends AutoApplyTransformsConsumer<RealTimeCallApiEve
     })
   }
 
+  // amd alias
+  detectAnsweringMachine = this.amd
+
   detectFax(params: Omit<VoiceCallDetectFaxParams, 'type'> = {}) {
     return this.detect({
       ...params,
